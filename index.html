@@ -138,7 +138,18 @@ const musica = document.getElementById("musica");
 
 let escala = 1;
 
-// Función para mover botón NO y crecer botón SI
+/* 🎵 Iniciar música en la primera interacción (celular compatible) */
+function iniciarMusica() {
+  musica.volume = 1;
+  musica.play().catch(() => {});
+  document.removeEventListener("click", iniciarMusica);
+  document.removeEventListener("touchstart", iniciarMusica);
+}
+
+document.addEventListener("click", iniciarMusica);
+document.addEventListener("touchstart", iniciarMusica);
+
+/* Función para mover botón NO y crecer botón SI */
 function moverBoton() {
   const x = Math.random() * (window.innerWidth - 120);
   const y = Math.random() * (window.innerHeight - 60);
@@ -156,19 +167,6 @@ noBtn.addEventListener("touchstart", moverBoton);
 
 // Cuando dice que SÍ
 yesBtn.addEventListener("click", () => {
-
-  // Reproducir música con efecto fade in
-  musica.volume = 0;
-  musica.play();
-
-  let fade = setInterval(() => {
-    if (musica.volume < 1) {
-      musica.volume += 0.05;
-    } else {
-      clearInterval(fade);
-    }
-  }, 200);
-
   mensaje.style.display = "block";
   yesBtn.style.display = "none";
   noBtn.style.display = "none";
