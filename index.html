@@ -119,31 +119,36 @@ const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const mensaje = document.getElementById("mensajeFinal");
 const musica = document.getElementById("musica");
+const areaBotones = document.getElementById("areaBotones");
 
 let escala = 1;
 let musicaIniciada = false;
 
-/* 🔥 Función para iniciar música */
+/* 🎵 Iniciar música solo una vez */
 function iniciarMusica() {
   if (!musicaIniciada) {
-    musica.play().catch(() => {});
-    musicaIniciada = true;
+    musica.volume = 1;
+    musica.play().then(() => {
+      musicaIniciada = true;
+    }).catch(() => {});
   }
 }
 
-/* 🔥 Mover botón dentro de la pantalla visible */
+/* 🔥 Música al primer click o toque en cualquier parte */
+document.addEventListener("click", iniciarMusica, { once: true });
+document.addEventListener("touchstart", iniciarMusica, { once: true });
+
+/* 🔥 Mover botón NO dentro del contenedor */
 function moverBoton() {
 
-  iniciarMusica(); // 🎵 empieza música si toca NO
+  const areaWidth = areaBotones.clientWidth;
+  const areaHeight = areaBotones.clientHeight;
 
-  const anchoPantalla = window.innerWidth;
-  const altoPantalla = window.innerHeight;
+  const btnWidth = noBtn.offsetWidth;
+  const btnHeight = noBtn.offsetHeight;
 
-  const botonAncho = noBtn.offsetWidth;
-  const botonAlto = noBtn.offsetHeight;
-
-  const maxX = anchoPantalla - botonAncho - 20;
-  const maxY = altoPantalla - botonAlto - 20;
+  const maxX = areaWidth - btnWidth;
+  const maxY = areaHeight - btnHeight;
 
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
@@ -151,6 +156,7 @@ function moverBoton() {
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
 
+  // 💖 Crecer botón SI 10%
   escala += 0.1;
   yesBtn.style.transform = `scale(${escala})`;
 }
@@ -163,15 +169,12 @@ noBtn.addEventListener("touchstart", moverBoton);
 
 /* Cuando dice que SÍ */
 yesBtn.addEventListener("click", () => {
-
-  iniciarMusica(); // 🎵 empieza si toca SI
-
   mensaje.style.display = "block";
   yesBtn.style.display = "none";
   noBtn.style.display = "none";
 });
 
-/* Corazones flotando */
+/* 💘 Corazones flotando */
 function crearCorazon() {
   const corazon = document.createElement("div");
   corazon.classList.add("corazon");
