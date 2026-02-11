@@ -31,6 +31,16 @@ h1 {
   margin: 20px auto;
 }
 
+@media (max-width: 600px) {
+  .contenedor-gifs {
+    padding: 0 10px;
+  }
+
+  .gif {
+    width: 120px;
+  }
+}
+
 button {
   padding: 15px 30px;
   margin: 15px;
@@ -78,7 +88,10 @@ button {
 
 <h1>¿Quieres ser mi San Valentín? 💕</h1>
 
-<img class="gif" src="kermit.gif">
+<div class="contenedor-gifs">
+  <img class="gif" src="kermit.gif">
+  <img class="gif" src="thanos.gif">
+</div>
 
 <div>
   <button id="yes">💖 Sí</button>
@@ -88,7 +101,7 @@ button {
 <p id="mensajeFinal">¡Sabía que dirías que sí! 🥰 Te amo muchísimo 💘</p>
 
 <audio autoplay loop>
-  <source src="temperaturaoriginal.mp3" type="audio/mp3">
+  <source src="temperatura.mp3" type="audio/mp3">
 </audio>
 
 <script>
