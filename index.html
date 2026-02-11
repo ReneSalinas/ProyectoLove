@@ -8,10 +8,10 @@
 <style>
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
   text-align: center;
   background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -26,24 +26,30 @@ h1 {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Layout principal */
+.fila-principal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.botones {
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+
+/* GIFS */
 .gif {
-  width: 250px;
-  margin: 20px auto;
+  width: 180px;
 }
 
-@media (max-width: 600px) {
-  .contenedor-gifs {
-    padding: 0 10px;
-  }
-
-  .gif {
-    width: 120px;
-  }
-}
-
+/* BOTONES */
 button {
   padding: 15px 30px;
-  margin: 15px;
   font-size: 1.2rem;
   border: none;
   border-radius: 20px;
@@ -62,6 +68,7 @@ button {
   position: absolute;
 }
 
+/* Mensaje final */
 #mensajeFinal {
   display: none;
   font-size: 1.8rem;
@@ -72,32 +79,30 @@ button {
 
 /* Corazones flotando */
 .corazon {
-  position: absolute;
+  position: fixed;
   font-size: 20px;
   animation: flotar 5s linear infinite;
 }
 
+@keyframes flotar {
+  from { transform: translateY(100vh); opacity: 1; }
+  to { transform: translateY(-10vh); opacity: 0; }
+}
+
+/* 📱 Ajustes para celular */
 @media (max-width: 768px) {
   .fila-principal {
     flex-direction: column;
     gap: 20px;
   }
-}
 
+  .gif {
+    width: 130px;
+  }
 
-.botones {
-  display: flex;
-  gap: 20px;
-}
-
-.gif {
-  width: 180px;
-}
-
-
-@keyframes flotar {
-  from { transform: translateY(100vh); opacity: 1; }
-  to { transform: translateY(-10vh); opacity: 0; }
+  #no {
+    position: relative;
+  }
 }
 </style>
 </head>
@@ -119,15 +124,9 @@ button {
 
 </div>
 
-
-<div>
-  <button id="yes">💖 Sí</button>
-  <button id="no">💔 No</button>
-</div>
-
 <p id="mensajeFinal">¡Sabía que dirías que sí! 🥰 Te amo muchísimo 💘</p>
 
-<audio autoplay loop>
+<audio id="musica" loop>
   <source src="temperatura.mp3" type="audio/mp3">
 </audio>
 
@@ -135,24 +134,41 @@ button {
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const mensaje = document.getElementById("mensajeFinal");
+const musica = document.getElementById("musica");
 
-let escala = 1; // tamaño inicial del botón "Sí"
+let escala = 1;
 
-// Botón que huye y hace crecer el "Sí"
-noBtn.addEventListener("mouseover", () => {
-  // mover botón NO
-  const x = Math.random() * (window.innerWidth - 100);
-  const y = Math.random() * (window.innerHeight - 50);
+// Función para mover botón NO y crecer botón SI
+function moverBoton() {
+  const x = Math.random() * (window.innerWidth - 120);
+  const y = Math.random() * (window.innerHeight - 60);
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
 
-  // aumentar tamaño del botón SI 10%
   escala += 0.1;
   yesBtn.style.transform = `scale(${escala})`;
-});
+}
 
-// Cuando dice que sí
+// PC
+noBtn.addEventListener("mouseover", moverBoton);
+// Celular
+noBtn.addEventListener("touchstart", moverBoton);
+
+// Cuando dice que SÍ
 yesBtn.addEventListener("click", () => {
+
+  // Reproducir música con efecto fade in
+  musica.volume = 0;
+  musica.play();
+
+  let fade = setInterval(() => {
+    if (musica.volume < 1) {
+      musica.volume += 0.05;
+    } else {
+      clearInterval(fade);
+    }
+  }, 200);
+
   mensaje.style.display = "block";
   yesBtn.style.display = "none";
   noBtn.style.display = "none";
@@ -174,3 +190,5 @@ function crearCorazon() {
 setInterval(crearCorazon, 300);
 </script>
 
+</body>
+</html>
