@@ -77,6 +77,24 @@ button {
   animation: flotar 5s linear infinite;
 }
 
+@media (max-width: 768px) {
+  .fila-principal {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+
+.botones {
+  display: flex;
+  gap: 20px;
+}
+
+.gif {
+  width: 180px;
+}
+
+
 @keyframes flotar {
   from { transform: translateY(100vh); opacity: 1; }
   to { transform: translateY(-10vh); opacity: 0; }
@@ -88,10 +106,19 @@ button {
 
 <h1>¿Quieres ser mi San Valentín? 💕</h1>
 
-<div class="contenedor-gifs">
+<div class="fila-principal">
+  
   <img class="gif" src="kermit.gif">
+
+  <div class="botones">
+    <button id="yes">💖 Sí</button>
+    <button id="no">💔 No</button>
+  </div>
+
   <img class="gif" src="thanos.gif">
+
 </div>
+
 
 <div>
   <button id="yes">💖 Sí</button>
