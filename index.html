@@ -96,12 +96,19 @@ const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const mensaje = document.getElementById("mensajeFinal");
 
-// Botón que huye
+let escala = 1; // tamaño inicial del botón "Sí"
+
+// Botón que huye y hace crecer el "Sí"
 noBtn.addEventListener("mouseover", () => {
-  const x = Math.random() * window.innerWidth;
-  const y = Math.random() * window.innerHeight;
+  // mover botón NO
+  const x = Math.random() * (window.innerWidth - 100);
+  const y = Math.random() * (window.innerHeight - 50);
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
+
+  // aumentar tamaño del botón SI 10%
+  escala += 0.1;
+  yesBtn.style.transform = `scale(${escala})`;
 });
 
 // Cuando dice que sí
@@ -127,5 +134,3 @@ function crearCorazon() {
 setInterval(crearCorazon, 300);
 </script>
 
-</body>
-</html>
