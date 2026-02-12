@@ -11,17 +11,19 @@ body {
   font-family: Arial, sans-serif;
   text-align: center;
   background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  overflow: hidden;
   height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
 h1 {
   margin-top: 30px;
   font-size: 2rem;
   color: white;
+  z-index: 1;
+  position: relative;
 }
 
-/* Layout */
 .fila-principal {
   display: flex;
   justify-content: center;
@@ -29,19 +31,14 @@ h1 {
   gap: 30px;
   margin-top: 20px;
   flex-wrap: wrap;
-}
-
-.botones {
-  display: flex;
-  gap: 20px;
   position: relative;
+  z-index: 1;
 }
 
 .gif {
-  width: 160px;
+  width: 150px;
 }
 
-/* Botones */
 button {
   padding: 15px 30px;
   font-size: 1.2rem;
@@ -54,39 +51,31 @@ button {
 #yes {
   background-color: #ff4d6d;
   color: white;
+  position: relative;
+  z-index: 2;
 }
 
 #no {
   background-color: white;
   color: #ff4d6d;
-  position: relative;
+  position: fixed; /* 🔥 ahora se mueve por toda la pantalla */
+  z-index: 3;
 }
 
 #mensajeFinal {
   display: none;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: white;
   margin-top: 20px;
+  position: relative;
+  z-index: 2;
 }
 
-/* Corazones flotando */
-.corazon {
+.confeti {
   position: fixed;
-  font-size: 20px;
-  animation: flotar 5s linear infinite;
-}
-
-@keyframes flotar {
-  from { transform: translateY(100vh); opacity: 1; }
-  to { transform: translateY(-10vh); opacity: 0; }
-}
-
-/* Confetti */
-.confetti {
-  position: fixed;
-  width: 8px;
-  height: 15px;
-  top: -20px;
+  width: 10px;
+  height: 10px;
+  top: -10px;
   animation: caer 3s linear forwards;
 }
 
@@ -97,15 +86,13 @@ button {
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .fila-principal {
     flex-direction: column;
-    gap: 20px;
   }
 
   .gif {
-    width: 120px;
+    width: 110px;
   }
 }
 </style>
@@ -116,26 +103,25 @@ button {
 <h1>¿Quieres ser mi San Valentín? 💕</h1>
 
 <div class="fila-principal">
-  
   <img class="gif" src="kermit.gif">
 
-  <div class="botones" id="areaBotones">
-    <button id="yes">💖 Sí</button>
-    <button id="no">💔 No</button>
-  </div>
+  <button id="yes">💖 Sí</button>
 
   <img class="gif" src="thanos.gif">
-
 </div>
+
+<button id="no">💔 No</button>
 
 <p id="mensajeFinal">¡Sabía que dirías que sí! 🥰 Te amo muchísimo 💘</p>
 
+<!-- Música romántica -->
 <audio id="musica" loop>
   <source src="temperatura.mp3" type="audio/mp3">
 </audio>
 
+<!-- Sonido celebración -->
 <audio id="celebracion">
-  <source src="aplausos.mp3" type="audio/mp3">
+  <source src="celebracion.mp3" type="audio/mp3">
 </audio>
 
 <script>
@@ -144,35 +130,40 @@ const yesBtn = document.getElementById("yes");
 const mensaje = document.getElementById("mensajeFinal");
 const musica = document.getElementById("musica");
 const celebracion = document.getElementById("celebracion");
-const areaBotones = document.getElementById("areaBotones");
 
 let escala = 1;
 let musicaIniciada = false;
 
-/* 🎵 Música al primer toque */
+/* 🎵 Iniciar música en primer toque */
 function iniciarMusica() {
   if (!musicaIniciada) {
-    musica.play().catch(() => {});
-    musicaIniciada = true;
+    musica.volume = 1;
+    musica.play().then(() => {
+      musicaIniciada = true;
+    }).catch(() => {});
   }
 }
 
-document.addEventListener("click", iniciarMusica, { once: true });
 document.addEventListener("touchstart", iniciarMusica, { once: true });
+document.addEventListener("click", iniciarMusica, { once: true });
 
-/* 🔥 Mover botón NO */
+/* 🔥 Posición inicial del botón NO */
+function posicionInicial() {
+  noBtn.style.left = (window.innerWidth / 2 - 50) + "px";
+  noBtn.style.top = (window.innerHeight - 120) + "px";
+}
+posicionInicial();
+
+/* 🔥 Mover botón por TODA la pantalla */
 function moverBoton() {
 
-  noBtn.style.position = "absolute";
-
-  const areaWidth = areaBotones.clientWidth;
-  const areaHeight = areaBotones.clientHeight;
+  iniciarMusica(); // 🔥 ahora también suena si toca NO
 
   const btnWidth = noBtn.offsetWidth;
   const btnHeight = noBtn.offsetHeight;
 
-  const maxX = areaWidth - btnWidth;
-  const maxY = areaHeight - btnHeight;
+  const maxX = window.innerWidth - btnWidth;
+  const maxY = window.innerHeight - btnHeight;
 
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
@@ -184,26 +175,25 @@ function moverBoton() {
   yesBtn.style.transform = `scale(${escala})`;
 }
 
+/* PC */
 noBtn.addEventListener("mouseover", moverBoton);
+
+/* Celular */
 noBtn.addEventListener("touchstart", moverBoton);
 
 /* 🎉 Confetti */
-function lanzarConfetti() {
-  for (let i = 0; i < 150; i++) {
-    const confetti = document.createElement("div");
-    confetti.classList.add("confetti");
-
-    const colores = ["#ff4d6d", "#ffffff", "#ffd700", "#00ffff", "#ff00ff"];
-    confetti.style.backgroundColor =
-      colores[Math.floor(Math.random() * colores.length)];
-
-    confetti.style.left = Math.random() * 100 + "vw";
-    confetti.style.animationDuration = (Math.random() * 2 + 2) + "s";
-
-    document.body.appendChild(confetti);
+function lanzarConfeti() {
+  for (let i = 0; i < 120; i++) {
+    const confeti = document.createElement("div");
+    confeti.classList.add("confeti");
+    confeti.style.left = Math.random() * 100 + "vw";
+    confeti.style.backgroundColor =
+      "hsl(" + Math.random() * 360 + ", 100%, 50%)";
+    confeti.style.animationDuration = (Math.random() * 2 + 2) + "s";
+    document.body.appendChild(confeti);
 
     setTimeout(() => {
-      confetti.remove();
+      confeti.remove();
     }, 3000);
   }
 }
@@ -211,28 +201,15 @@ function lanzarConfetti() {
 /* 💖 Cuando dice SÍ */
 yesBtn.addEventListener("click", () => {
 
+  iniciarMusica();
+
   mensaje.style.display = "block";
   yesBtn.style.display = "none";
   noBtn.style.display = "none";
 
-  celebracion.play().catch(() => {});
-  lanzarConfetti();
+  celebracion.play();
+  lanzarConfeti();
 });
-
-/* 💘 Corazones constantes */
-function crearCorazon() {
-  const corazon = document.createElement("div");
-  corazon.classList.add("corazon");
-  corazon.innerHTML = "💖";
-  corazon.style.left = Math.random() * 100 + "vw";
-  document.body.appendChild(corazon);
-
-  setTimeout(() => {
-    corazon.remove();
-  }, 5000);
-}
-
-setInterval(crearCorazon, 300);
 </script>
 
 </body>
