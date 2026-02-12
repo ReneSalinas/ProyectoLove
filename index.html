@@ -79,6 +79,23 @@ button {
   animation: caer 3s linear forwards;
 }
 
+.corazon {
+  position: fixed;
+  bottom: -30px;
+  font-size: 22px;
+  animation: flotar 6s linear forwards;
+  pointer-events: none;
+  z-index: 0; /* 🔥 detrás de todo */
+}
+
+@keyframes flotar {
+  to {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
+}
+
+
 @keyframes caer {
   to {
     transform: translateY(110vh) rotate(720deg);
@@ -133,6 +150,19 @@ const celebracion = document.getElementById("celebracion");
 
 let escala = 1;
 let musicaIniciada = false;
+
+/* 💖 Corazones flotando siempre */
+function crearCorazon() {
+  const corazon = document.createElement("div");
+  corazon.classList.add("corazon");
+  corazon.innerHTML = "💖";
+  corazon.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(corazon);
+
+  setTimeout(() => {
+    corazon.remove();
+  }, 6000);
+}
 
 /* 🎵 Forzar música en móviles correctamente */
 function iniciarMusica() {
@@ -213,6 +243,9 @@ function lanzarConfeti() {
   }
 }
 
+/* 💕 Lluvia constante desde el inicio */
+setInterval(crearCorazon, 400);
+
 /* 💖 Cuando dice SÍ */
 yesBtn.addEventListener("click", () => {
 
@@ -224,6 +257,7 @@ yesBtn.addEventListener("click", () => {
 
   celebracion.play();
   lanzarConfeti();
+
 });
 </script>
 
