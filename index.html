@@ -115,7 +115,7 @@ button {
 <p id="mensajeFinal">¡Sabía que dirías que sí! 🥰 Te amo muchísimo 💘</p>
 
 <!-- Música romántica -->
-<audio id="musica" loop>
+<audio id="musica" loop preload="auto">
   <source src="temperatura.mp3" type="audio/mp3">
 </audio>
 
@@ -134,36 +134,51 @@ const celebracion = document.getElementById("celebracion");
 let escala = 1;
 let musicaIniciada = false;
 
-/* 🎵 Iniciar música en primer toque */
+/* 🎵 Forzar música en móviles correctamente */
 function iniciarMusica() {
   if (!musicaIniciada) {
+    musica.muted = false;
     musica.volume = 1;
-    musica.play().then(() => {
-      musicaIniciada = true;
-    }).catch(() => {});
+    musica.play()
+      .then(() => {
+        musicaIniciada = true;
+      })
+      .catch(err => {
+        console.log("Audio bloqueado:", err);
+      });
   }
 }
 
-document.addEventListener("touchstart", iniciarMusica, { once: true });
-document.addEventListener("click", iniciarMusica, { once: true });
+/* Activar música en cualquier interacción REAL */
+document.body.addEventListener("touchstart", iniciarMusica, { once: true });
+document.body.addEventListener("click", iniciarMusica, { once: true });
 
-/* 🔥 Posición inicial del botón NO */
-function posicionInicial() {
-  noBtn.style.left = (window.innerWidth / 2 - 50) + "px";
-  noBtn.style.top = (window.innerHeight - 120) + "px";
+/* 📱 Altura real visible en móviles */
+function alturaReal() {
+  return window.visualViewport
+    ? window.visualViewport.height
+    : window.innerHeight;
 }
-posicionInicial();
 
-/* 🔥 Mover botón por TODA la pantalla */
-function moverBoton() {
+/* 🔥 Posición inicial segura */
+function posicionInicial() {
+  noBtn.style.left = (window.innerWidth / 2 - noBtn.offsetWidth / 2) + "px";
+  noBtn.style.top = (alturaReal() - 150) + "px";
+}
+window.addEventListener("load", posicionInicial);
 
-  iniciarMusica(); // 🔥 ahora también suena si toca NO
+/* 🔥 Mover botón por toda la pantalla */
+function moverBoton(e) {
+
+  e.preventDefault(); // evita que se “pegue”
+
+  iniciarMusica();
 
   const btnWidth = noBtn.offsetWidth;
   const btnHeight = noBtn.offsetHeight;
 
   const maxX = window.innerWidth - btnWidth;
-  const maxY = window.innerHeight - btnHeight;
+  const maxY = alturaReal() - btnHeight;
 
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
@@ -178,8 +193,8 @@ function moverBoton() {
 /* PC */
 noBtn.addEventListener("mouseover", moverBoton);
 
-/* Celular */
-noBtn.addEventListener("touchstart", moverBoton);
+/* 📱 Móvil – usar pointerdown (más moderno y estable) */
+noBtn.addEventListener("pointerdown", moverBoton);
 
 /* 🎉 Confetti */
 function lanzarConfeti() {
